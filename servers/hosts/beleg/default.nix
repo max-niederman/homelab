@@ -1,26 +1,30 @@
-{ config, pkgs, ... }:
-
 {
-  deployment = {
-    targetHost = "192.168.0.11";
-  };
+  address = "192.168.0.11";
+  roles = [ "client" "server" ];
 
-  imports = [
-    ./hardware-configuration.nix
-    ./cluster.nix
-  ];
+  nixosConfig =
+    ({ config, pkgs, ... }: {
+      imports = [
+        ./hardware-configuration.nix
+      ];
 
-  networking = {
-    hostName = "beleg";
-    interfaces.enp4s0 = {
-      ipv4 = {
-        addresses = [{ address = config.deployment.targetHost; prefixLength = 24; }];
-        routes = [{ address = "0.0.0.0"; prefixLength = 0; via = "192.168.0.1"; }];
+      networking = {
+        interfaces.enp4s0 = {
+          ipv4 = {
+            addresses = [{ address = config.homelab.host.address; prefixLength = 24; }];
+            routes = [{ address = "0.0.0.0"; prefixLength = 0; via = "192.168.0.1"; }];
+          };
+        };
       };
-    };
-  };
 
-  hardware = {
-    cpu.amd.updateMicrocode = true;
-  };
+      hardware = {
+        cpu.amd.updateMicrocode = true;
+      };
+
+      services = {
+        consul = {
+          interface.bind = "enp4s0";
+        };
+      };
+    });
 }

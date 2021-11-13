@@ -1,4 +1,18 @@
-{
+with import <nixpkgs/lib>;
+let
+  hosts = import ./hosts { };
+  machines = builtins.listToAttrs
+    (builtins.map
+      (host: {
+        name = host.name;
+        value = ({ config, pkgs, lib, ... } @ args:
+          attrsets.recursiveUpdate
+            (attrsets.setAttrByPath [ "homelab" "host" ] host)
+            (host.nixosConfig args));
+      })
+      hosts.all);
+in
+machines // {
   network = {
     description = "homelab";
     storage = {
@@ -9,6 +23,4 @@
   defaults = {
     imports = [ ./modules ];
   };
-
-  beleg = import ./hosts/beleg;
 }

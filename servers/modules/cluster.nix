@@ -1,42 +1,48 @@
 { config, pkgs, lib, ... }:
 
+with builtins;
 with lib;
 let
-  members = rec {
-    servers = [ "192.168.0.11" ];
-    clients = [ "192.168.0.11" ];
-    all = lists.unique (servers ++ clients);
-  };
-  addr = config.deployment.targetHost;
-  isIn = builtins.elem addr;
+  host = config.homelab.host;
+  hasRole = r: elem r host.roles;
+
+  hosts = import ../hosts { lib = lib; };
+  servers = hosts.withRole "server";
 in
 {
   config = {
-    services = mkIf (isIn members.all) {
+    services = {
 
       nomad = {
         enable = true;
         enableDocker = true;
+        dropPrivileges = false; # needed for Consul Connect
         settings =
           let
-            server_join = {
-              retry_join = members.servers;
-              retry_max = 3;
-              retry_interval = "30s";
+            serverJoin = {
+              retry_join = map ({ address, ... }: address) servers;
             };
           in
           {
-            bind_addr = addr;
+            region = "home";
 
-            client = mkIf (isIn members.clients) {
+            bind_addr = host.address;
+
+            client = mkIf (hasRole "client") {
               enabled = true;
-              server_join = server_join;
             };
 
-            server = mkIf (isIn members.servers) {
+            server = mkIf (hasRole "server") {
               enabled = true;
-              bootstrap_expect = builtins.length members.servers;
-              server_join = server_join;
+              bootstrap_expect = length servers;
+            };
+
+            telemetry = {
+              collection_interval = "1s";
+              disable_hostname = true;
+              prometheus_metrics = true;
+              publish_allocation_metrics = true;
+              publish_node_metrics = true;
             };
           };
       };
@@ -44,19 +50,54 @@ in
       consul = {
         enable = true;
         extraConfig = {
-          bind_addr = addr;
-          # if server, serve web ui publicly
-          addresses.http = mkIf (isIn members.servers) addr; 
+          server = hasRole "server";
+          bootstrap_expect = length servers;
 
-          server = isIn members.servers;
-          bootstrap_expect = builtins.length members.servers;
+          connect.enabled = true;
+
+          ports = {
+            grpc = 8502;
+          };
 
           ui_config = {
-            enabled = true;
+            enabled = hasRole "server";
             # TODO: integrate Prometheus
           };
         };
       };
+
+      vault = mkIf (hasRole "server") {
+        enable = true;
+        storageBackend = "consul";
+      };
+
+      # expose the Consul UI
+      socat = mkIf (hasRole "server") {
+        enable = true;
+        instances.proxy-consul-ui = {
+          addresses = [ "TCP-LISTEN:8500,fork,bind=${host.address}" "TCP4:127.0.0.1:8500" ];
+        };
+      };
     };
+
+    # Nomad's Consul Connect integration assumes CNI plugin binaries are in /opt/cni/bin
+    # this activation script creates a custom CNI environment from the `cni` and `cni-plugins` packages and links /opt/cni to it
+    system.activationScripts.cni =
+      let
+        env = pkgs.buildEnv
+          {
+            name = "cni";
+            paths = with pkgs; [ cni cni-plugins ];
+            pathsToLink = [ "/bin" ];
+            extraPrefix = "/opt/cni";
+          };
+      in
+      ''
+        ln -sf ${env}/opt/cni /opt/cni
+      '';
+
+    # in addition, we install the `cni` package normally, which Nomad will use the normal way
+    environment.systemPackages = with pkgs; [ cni ];
   };
 }
+

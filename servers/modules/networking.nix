@@ -3,6 +3,8 @@
 {
   config = {
     networking = {
+      hostName = config.homelab.host.name;
+
       firewall.enable = false;
 
       useDHCP = false;

@@ -1,2 +1,5 @@
 [*.nix]
 tab_width = 2
+
+[*.nomad]
+tab_width = 2

@@ -2,7 +2,7 @@
 
 {
   config = {
-    environment.systemPackages = with pkgs; with pkgs; [
+    environment.systemPackages = with pkgs; [
       neovim
     ];
 
