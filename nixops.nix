@@ -24,5 +24,5 @@ machines // {
     imports = [ ./nixos/modules ];
   };
 
-  keys = import ./keys;
+  # keys = import ./keys;
 }

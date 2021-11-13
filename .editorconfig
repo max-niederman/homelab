@@ -1,5 +1,5 @@
 [*.nix]
 tab_width = 2
 
-[*.nomad]
+[*.yml]
 tab_width = 2

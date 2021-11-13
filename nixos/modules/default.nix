@@ -6,8 +6,9 @@ let
 in
 {
   imports = [
-    ./networking.nix
     ./administration.nix
+    ./networking.nix
+    ./storage.nix
     ./cluster.nix
   ];
 
@@ -32,6 +33,15 @@ in
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
+
+    environment.systemPackages = with pkgs; [
+      homelab.networks.create
+      homelab.networks.destroy
+      homelab.deploy
+      homelab.deploy-all
+    ];
+
+    nixpkgs.overlays = [ (import ../overlay.nix) ];
 
     time.timeZone = "America/Los_Angeles";
   };

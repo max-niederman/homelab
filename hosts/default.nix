@@ -6,7 +6,7 @@ rec {
   # all :: [Host]
   all = with attrsets;
     mapAttrsToList
-      (path: _: import (./. + "/${path}") // { name = path; })
+      (path: _: recursiveUpdate (import (./. + "/${path}")) { name = path; })
       (filterAttrs
         (_: type: type == "directory")
         (readDir ./.));
