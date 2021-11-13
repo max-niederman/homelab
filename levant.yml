@@ -1,5 +1,0 @@
-tld: home.maxniederman.com
-
-nomad:
-    region: home
-    datacenter: dc1

@@ -6,7 +6,6 @@ let
 in
 {
   imports = [
-    ./services
     ./networking.nix
     ./administration.nix
     ./cluster.nix

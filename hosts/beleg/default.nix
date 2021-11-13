@@ -1,6 +1,6 @@
 {
   address = "192.168.0.11";
-  roles = [ "client" "server" ];
+  roles = [ "worker" "manager" "leader" ];
 
   nixosConfig =
     ({ config, pkgs, ... }: {
@@ -21,10 +21,6 @@
         cpu.amd.updateMicrocode = true;
       };
 
-      services = {
-        consul = {
-          interface.bind = "enp4s0";
-        };
-      };
+      services = { };
     });
 }
