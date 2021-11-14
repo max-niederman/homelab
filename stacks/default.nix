@@ -18,7 +18,7 @@ let
   buildStack = name: { compose, binds ? { } }:
     let
       composeJSON = builtins.toJSON compose;
-      bindsLines = strings.concatStringsSep "\n" (builtins.attrValues binds);
+      bindsLines = strings.concatStringsSep "\n" (attrsets.attrValues binds);
     in
     pkgs.runCommandLocal
       name

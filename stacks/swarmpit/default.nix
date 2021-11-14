@@ -4,15 +4,15 @@
 rec {
   binds = let gen = lib.stacks.getBindTarget "swarmpit"; in
     {
-      couchdbData = gen "/opt/couchdb/data";
-      influxdbData = gen "/var/lib/influxdb";
+      couchdb = gen "/couchdb";
+      influxdb = gen "/influxdb";
     };
 
   compose = {
     version = "3";
 
     networks = {
-      net.driver = "overlay";
+      internal.driver = "overlay";
       public.external = true;
     };
 
@@ -23,11 +23,12 @@ rec {
         volumes = [
           "/var/run/docker.sock:/var/run/docker.sock:ro"
         ];
-        networks = [ "net" "public" ];
+        networks = [ "internal" "public" ];
         environment = {
           SWARMPIT_DB = "http://db:5984";
           SWARMPIT_INFLUXDB = "http://influxdb:8086";
         };
+        depends_on = [ "db" "influxdb" ];
         deploy = {
           placement.constraints = [ "node.role == manager" ];
           resources = {
@@ -50,9 +51,9 @@ rec {
       db = {
         image = "couchdb:2.3.0";
         volumes = [
-          "${binds.couchdbData}:/opt/couchdb/data"
+          "${binds.couchdb}:/opt/couchdb/data"
         ];
-        networks = [ "net" ];
+        networks = [ "internal" ];
         deploy.resources = {
           limits = {
             cpus = "0.50";
@@ -68,9 +69,9 @@ rec {
       influxdb = {
         image = "influxdb:1.7";
         volumes = [
-          "${binds.influxdbData}:/var/lib/influxdb"
+          "${binds.influxdb}:/var/lib/influxdb"
         ];
-        networks = [ "net" ];
+        networks = [ "internal" ];
         deploy.resources = {
           limits = {
             cpus = "0.60";
@@ -88,7 +89,7 @@ rec {
         volumes = [
           "/var/run/docker.sock:/var/run/docker.sock:ro"
         ];
-        networks = [ "net" ];
+        networks = [ "internal" ];
         deploy = {
           mode = "global";
           labels = lib.stacks.genKVLabels { swarmpit.agent = true; };

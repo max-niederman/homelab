@@ -21,6 +21,11 @@
         cpu.amd.updateMicrocode = true;
       };
 
-      services = { };
+      services = {
+        wings = {
+          enable = true;
+          configFile = ./wings.yml;
+        };
+      };
     });
 }
