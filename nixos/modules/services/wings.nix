@@ -23,6 +23,14 @@ in
   config = mkIf cfg.enable {
     virtualisation.docker.enable = true;
 
+    users.users.pterodactyl = {
+      description = "Pterodactyl wings daemon user";
+      home = "/var/empty";
+      group = "users";
+      isSystemUser = true;
+    };
+    users.groups.pterodactyl = { };
+
     environment.etc."pterodactyl/config.yml" = {
       source = cfg.configFile;
       mode = "0644";

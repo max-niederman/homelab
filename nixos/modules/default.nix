@@ -42,7 +42,10 @@ in
       homelab.deploy-all
     ];
 
-    nixpkgs.overlays = [ (import ../overlay.nix) ];
+    nixpkgs = {
+      config.allowUnfree = true;
+      overlays = [ (import ../overlay.nix) ];
+    };
 
     time.timeZone = "America/Los_Angeles";
   };

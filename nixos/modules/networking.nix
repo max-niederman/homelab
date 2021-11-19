@@ -1,5 +1,8 @@
 { config, pkgs, lib, ... }:
 
+let
+  secrets = import ../../secrets.nix;
+in
 {
   config = {
     networking = {
@@ -16,6 +19,12 @@
       enable = true;
       nssmdns = true;
       publish.enable = true;
+    };
+
+    # remote access with ZeroTier
+    services.zerotierone = {
+      enable = true;
+      joinNetworks = [ secrets.zerotierNetwork ];
     };
   };
 }

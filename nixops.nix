@@ -1,6 +1,7 @@
 with import <nixpkgs/lib>;
 let
   hosts = import ./hosts { };
+  secrets = import ./secrets.nix;
   machines = builtins.listToAttrs
     (builtins.map
       (host: {
@@ -23,6 +24,4 @@ machines // {
   defaults = {
     imports = [ ./nixos/modules ];
   };
-
-  # keys = import ./keys;
 }
