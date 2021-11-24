@@ -4,7 +4,9 @@ let
   secrets = import ./secrets.nix;
 in
 rec {
-  binds = let gen = lib.stacks.getBindTarget "pterodactyl"; in
+  binds =
+    let
+      gen = lib.stacks.getBindTarget "pterodactyl"; in
     {
       var = gen "/var";
       nginx = gen "/nginx";

@@ -60,18 +60,23 @@ rec {
     name=$1
 
     # create binds
+    echo "Creating binds"
     for bind in $(cat ${stackFarm}/$name/binds)
     do
       if [ ! -d "$bind" ]; then
         if [ -f "$bind" ]; then
+          echo "File collided with bind $bind"
+          echo "Should we remove the file?"
           rm -i "$bind"
         fi
 
+        echo "Creating bind $bind"
         mkdir -p "$bind"
       fi
     done
 
     # deploy Compose stack
+    echo "Deploying stack to Docker Swarm"
     docker stack deploy -c ${stackFarm}/$name/docker-compose.yml $name
   '';
 
