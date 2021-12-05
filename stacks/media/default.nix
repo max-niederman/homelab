@@ -30,10 +30,6 @@ let
       "internal"
       "public"
     ];
-    environment = {
-      PUID = 1000;
-      PGID = 1000;
-    };
     deploy.labels = stacks.traefik.genSimpleLabels { inherit name port; };
   };
 in
@@ -71,6 +67,18 @@ rec {
         };
       };
 
+      jellyfin_vue = {
+        image = "jellyfin/jellyfin-vue:unstable";
+        volumes = [
+          "/etc/localtime:/etc/localtime:ro"
+        ];
+        networks = [ "public" ];
+        deploy.labels = stacks.traefik.genSimpleLabels {
+          name = "jellyfin-vue";
+          port = 80;
+        };
+      };
+
       sonarr = servarrService "sonarr" { port = 8989; };
       radarr = servarrService "radarr" { port = 7878; };
 
@@ -92,7 +100,11 @@ rec {
         cap_add = [ "NET_ADMIN" ];
         volumes = [
           "${./deluge/iptable.sh}:/root/iptable.sh:ro"
+
+          "${./deluge/openvpn}:/config/openvpn"
+
           "/etc/localtime:/etc/localtime:ro"
+
           "${binds.deluge}:/config"
           "${binds.shared}/downloads:/data/downloads"
         ];
@@ -101,22 +113,26 @@ rec {
           "public"
         ];
         environment = {
-          PUID = 1000;
-          PGID = 1000;
           VPN_ENABLED = "yes";
           VPN_CLIENT = "openvpn";
           VPN_PROV = "pia";
-          VPN_USER = secrets.pia.user;
+          VPN_USER = secrets.pia.username;
           VPN_PASS = secrets.pia.password;
           ENABLE_PRIVOXY = "yes";
           LAN_NETWORK = "192.168.0.0/24";
           DOCKER_NETWORK = "10.0.0.0/16";
-          NAME_SERVERS = strings.concatStringsSep "," [ "1.1.1.1" "1.0.0.1" "8.8.8.8" "8.8.4.4" ];
+          NAME_SERVERS = strings.concatStringsSep "," [ "1.1.1.1" "1.0.0.1" ];
         };
-        deploy.labels = stacks.traefik.genSimpleLabels {
-          name = "deluge";
-          port = 8112;
-        };
+        deploy.labels = lists.unique (builtins.concatLists [
+          (stacks.traefik.genSimpleLabels {
+            name = "deluge";
+            port = 8112;
+          })
+          (stacks.traefik.genSimpleLabels {
+            name = "privoxy";
+            port = 8118;
+          })
+        ]);
       };
     };
   };

@@ -1,8 +1,10 @@
 { pkgs, lib }:
 
-
+with lib;
 rec {
-  binds = let gen = lib.stacks.getBindTarget "swarmpit"; in
+  binds =
+    let
+      gen = stacks.getBindTarget "swarmpit"; in
     {
       couchdb = gen "/couchdb";
       influxdb = gen "/influxdb";
@@ -41,7 +43,7 @@ rec {
               memory = "512M";
             };
           };
-          labels = lib.stacks.traefik.genSimpleLabels {
+          labels = stacks.traefik.genSimpleLabels {
             name = "swarmpit";
             port = 8080;
           };
@@ -92,7 +94,7 @@ rec {
         networks = [ "internal" ];
         deploy = {
           mode = "global";
-          labels = lib.stacks.genKVLabels { swarmpit.agent = true; };
+          labels = stacks.genKVLabels { swarmpit.agent = true; };
           resources = {
             limits = {
               cpus = "0.10";

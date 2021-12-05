@@ -59,8 +59,8 @@ rec {
   deploy = pkgs.writeShellScriptBin "homelab-deploy" ''
     name=$1
 
-    # create binds
-    echo "Creating binds"
+    # initializing binds
+    echo "Initializing binds"
     for bind in $(cat ${stackFarm}/$name/binds)
     do
       if [ ! -d "$bind" ]; then
@@ -70,8 +70,10 @@ rec {
           rm -i "$bind"
         fi
 
-        echo "Creating bind $bind"
+        echo "Initiatalizing bind $bind"
         mkdir -p "$bind"
+      else
+        echo "Skipping already initialized bind $bind"
       fi
     done
 

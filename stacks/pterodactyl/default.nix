@@ -1,12 +1,13 @@
 { pkgs, lib }:
 
+with lib;
 let
   secrets = import ./secrets.nix;
 in
 rec {
   binds =
     let
-      gen = lib.stacks.getBindTarget "pterodactyl"; in
+      gen = stacks.getBindTarget "pterodactyl"; in
     {
       var = gen "/var";
       nginx = gen "/nginx";
@@ -51,7 +52,7 @@ rec {
         };
         depends_on = [ "db" "cache" ];
         deploy = {
-          labels = lib.stacks.traefik.genSimpleLabels {
+          labels = stacks.traefik.genSimpleLabels {
             name = "pterodactyl";
             port = 80;
           };
@@ -60,11 +61,11 @@ rec {
 
       db = {
         image = "library/mysql:8.0";
-        cap_add = [ "SYS_NICE" ];
         volumes = [
           "${binds.db}:/var/lib/mysql"
         ];
         networks = [ "internal" ];
+        user = "1000:1000";
         environment = {
           MYSQL_DATABASE = "panel";
           MYSQL_USER = "pterodactyl";
