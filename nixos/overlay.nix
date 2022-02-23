@@ -24,9 +24,9 @@ in
         sha256 = "2Tdx37/rojpj2d9Pm7KV6MFNveYmEqbP94HaJuwT4O4=";
       };
 
-      vendorSha256 = "QuLUEDH+YZUME1nE3P6HnWhZmSfCSORElS6+x0oWEjM=";
+      vendorSha256 = "ni02sXxCHBUVadLbXsjVzy1rcBJwnk5q3YgnQiBPBKA=";
 
-      runVend = true;
+      proxyVendor = true;
 
       meta = with lib; {
         description = "The server control plane for Pterodactyl Panel.";

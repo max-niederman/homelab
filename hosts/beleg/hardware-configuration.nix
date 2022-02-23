@@ -25,6 +25,12 @@
       device = "/dev/disk/by-uuid/520B-215D";
       fsType = "vfat";
     };
+  
+  fileSystems."/data" =
+    lib.mkForce {
+      device = "/dev/disk/by-uuid/1fcb01cf-56e0-40b8-8f2a-551e1a95f28d";
+      fsType = "xfs";
+    };
 
   swapDevices =
     [{ device = "/dev/disk/by-uuid/8e26b346-64d1-4c2e-8ad0-fd2791460b38"; }];
