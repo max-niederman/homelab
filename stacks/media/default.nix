@@ -115,9 +115,7 @@ rec {
         environment = {
           VPN_ENABLED = "yes";
           VPN_CLIENT = "openvpn";
-          VPN_PROV = "pia";
-          VPN_USER = secrets.pia.username;
-          VPN_PASS = secrets.pia.password;
+          VPN_PROV = "custom";
           ENABLE_PRIVOXY = "yes";
           LAN_NETWORK = "192.168.0.0/24";
           DOCKER_NETWORK = "10.0.0.0/16";
