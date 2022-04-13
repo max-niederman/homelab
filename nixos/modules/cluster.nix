@@ -12,6 +12,9 @@
         enable = true;
         dates = "weekly";
       };
+      extraOptions = lib.strings.concatStringsSep " " [
+        "--metrics-addr=0.0.0.0:9323"
+      ];
     };
   };
 }

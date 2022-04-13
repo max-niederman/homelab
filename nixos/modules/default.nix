@@ -11,6 +11,7 @@ in
     ./networking.nix
     ./storage.nix
     ./cluster.nix
+    ./monitoring.nix
   ];
 
   options.homelab = {

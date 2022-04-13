@@ -6,7 +6,8 @@ let
 
   binds =
     let
-      gen = stacks.getBindTarget "media"; in
+      gen = stacks.getBindTarget "media";
+    in
     {
       shared = gen "/shared";
 

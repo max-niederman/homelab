@@ -75,6 +75,10 @@ rec {
       else
         echo "Skipping already initialized bind $bind"
       fi
+
+      echo "Setting permissions on $bind"
+      chmod -R 777 "$bind"
+      chown -R "root:root" "$bind"
     done
 
     # deploy Compose stack

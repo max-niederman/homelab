@@ -14,11 +14,14 @@ in
       nameservers = [ "192.168.0.2" ];
     };
 
-    # mDNS
+    # zeroconf
     services.avahi = {
       enable = true;
       nssmdns = true;
-      publish.enable = true;
+      publish = {
+        enable = true;
+        addresses = true;
+      };
     };
 
     # remote access with ZeroTier
