@@ -17,7 +17,7 @@ let
       radarr = gen "/radarr";
 
       jackett = gen "/jackett";
-      deluge = gen "/deluge";
+      qbittorrent = gen "/qbittorrent";
     };
 
   servarrService = name: { port }: {
@@ -95,18 +95,18 @@ rec {
           port = 9117;
         };
       };
-
-      deluge = {
-        image = "binhex/arch-delugevpn";
+      
+      qbittorrent = {
+        image = "binhex/arch-qbittorrentvpn";
         cap_add = [ "NET_ADMIN" ];
         volumes = [
-          "${./deluge/iptable.sh}:/root/iptable.sh:ro"
+          "${./qbittorrent/iptable.sh}:/root/iptable.sh:ro"
 
-          "${./deluge/openvpn}:/config/openvpn"
+          "${./qbittorrent/openvpn}:/config/openvpn"
 
           "/etc/localtime:/etc/localtime:ro"
 
-          "${binds.deluge}:/config"
+          "${binds.qbittorrent}:/config"
           "${binds.shared}/downloads:/data/downloads"
         ];
         networks = [
@@ -124,8 +124,8 @@ rec {
         };
         deploy.labels = lists.unique (builtins.concatLists [
           (stacks.traefik.genSimpleLabels {
-            name = "deluge";
-            port = 8112;
+            name = "qbittorrent";
+            port = 8080;
           })
           (stacks.traefik.genSimpleLabels {
             name = "privoxy";

@@ -9,7 +9,7 @@ if [[ "${APPLICATION}" == "rtorrent" ]]; then
 	incoming_ports_ext_array+=(9080 9443)
 	incoming_ports_lan_array+=(5000)
 elif [[ "${APPLICATION}" == "qbittorrent" ]]; then
-	incoming_ports_ext_array+=(${WEBUI_PORT})
+	incoming_ports_lan_array+=(${WEBUI_PORT})
 elif [[ "${APPLICATION}" == "sabnzbd" ]]; then
 	incoming_ports_ext_array+=(8080 8090)
 elif [[ "${APPLICATION}" == "deluge" ]]; then
