@@ -31,9 +31,23 @@ scrape_configs:
       # set hostname as instance label
       - source_labels: [__meta_dockerswarm_node_hostname]
         target_label: instance
-
+  
   - job_name: "speedtest"
     scrape_interval: 1h
     scrape_timeout: 1m
     static_configs:
       - targets: ["monitoring_speedtest:9798"]
+
+  - job_name: "traefik"
+    dns_sd_configs:
+      - type: A
+        port: 8080
+        names:
+        - tasks.traefik_traefik
+        
+  - job_name: "adma_questdb"
+    dns_sd_configs:
+      - type: A
+        port: 9003
+        names:
+        - tasks.adma_questdb
