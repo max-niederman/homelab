@@ -17,12 +17,13 @@ rec {
 
     networks = {
       internal.driver = "overlay";
+      public.external = true;
       monitoring.external = true;
     };
 
     services = {
       bot = {
-        image = "ghcr.io/max-niederman/adma-bot:sha-4f65f5e";
+        image = "ghcr.io/max-niederman/adma-bot:sha-ca767aa";
         networks = [ "internal" ];
         environment = {
           DISCORD_TOKEN = secrets.discord.token;
@@ -37,7 +38,7 @@ rec {
         volumes = [
           "${binds.questdb}:/var/lib/questdb"
         ];
-        networks = [ "internal" "monitoring" ];
+        networks = [ "internal" "monitoring" "public" ];
         environment = {
           # enable strict config validation
           QDB_CONFIG_VALIDATION_STRICT = "true";
@@ -47,6 +48,10 @@ rec {
 
           # improve Grafana query memory usage
           QDB_PG_SELECT_CACHE_ENABLED = "false";
+        };
+        deploy.labels = stacks.traefik.genSimpleLabels {
+          name = "adma-questdb";
+          port = 9000;
         };
       };
     };
