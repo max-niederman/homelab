@@ -9,23 +9,23 @@
       (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
     {
-      device = "/dev/disk/by-uuid/5d18f065-d1c2-4c22-a7b2-94a2222c53d5";
+      device = "/dev/disk/by-uuid/1c5f14b6-2b3d-48a5-acf1-6f627e8fe8c4";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
     {
-      device = "/dev/disk/by-uuid/520B-215D";
+      device = "/dev/disk/by-uuid/1539-CFF0";
       fsType = "vfat";
     };
-  
+
   fileSystems."/data" =
     lib.mkForce {
       device = "/dev/disk/by-uuid/1fcb01cf-56e0-40b8-8f2a-551e1a95f28d";
@@ -33,5 +33,9 @@
     };
 
   swapDevices =
-    [{ device = "/dev/disk/by-uuid/8e26b346-64d1-4c2e-8ad0-fd2791460b38"; }];
+    [{ device = "/dev/disk/by-uuid/4282f8db-d482-4c83-ac32-bf595d087aea"; }];
+
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  # high-resolution display
+  hardware.video.hidpi.enable = lib.mkDefault true;
 }

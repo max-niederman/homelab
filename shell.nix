@@ -4,6 +4,8 @@
 
 with lib;
 let
+  nixpkgsRev = "nixos-22.05";
+
   hosts = import ./hosts { };
   server = hosts.withName "beleg";
 
@@ -29,4 +31,6 @@ pkgs.mkShell {
 
     homelab-deploy
   ];
+
+  NIX_PATH = "nixpkgs=https://github.com/NixOS/nixpkgs/archive/${nixpkgsRev}.tar.gz";
 }
