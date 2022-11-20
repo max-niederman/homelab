@@ -23,12 +23,13 @@ rec {
 
     services = {
       bot = {
-        image = "ghcr.io/max-niederman/adma-bot:sha-ca767aa";
+        image = "ghcr.io/max-niederman/adma-bot:sha-243bd3d";
         networks = [ "internal" ];
         environment = {
           DISCORD_TOKEN = secrets.discord.token;
           QUESTDB_HOST = "questdb";
-          QUESTDB_PORT = 9009;
+          QUESTDB_ILP_PORT = 9009;
+          QUESTDB_REST_PORT = 9000;
         };
         depends_on = [ "questdb" ];
       };
