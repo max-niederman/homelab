@@ -26,16 +26,14 @@
       fsType = "vfat";
     };
 
-  fileSystems."/data" =
-    lib.mkForce {
+  fileSystems."/data/media/shared" =
+    {
       device = "/dev/disk/by-uuid/1fcb01cf-56e0-40b8-8f2a-551e1a95f28d";
       fsType = "xfs";
     };
-
+  
   swapDevices =
     [{ device = "/dev/disk/by-uuid/4282f8db-d482-4c83-ac32-bf595d087aea"; }];
 
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  # high-resolution display
-  hardware.video.hidpi.enable = lib.mkDefault true;
 }

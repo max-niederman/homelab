@@ -21,16 +21,11 @@
         cpu.amd.updateMicrocode = true;
       };
 
-      services = {
-        wings = {
-          enable = true;
-          configFile = ./wings.yml;
-        };
-      };
-
-      services.nfs.server.enable = true;
-      services.nfs.server.exports = ''
-        /data   192.168.0.0/24(rw,sync,no_root_squash,no_subtree_check)
-      '';
+      # services = {
+      #   wings = {
+      #     enable = true;
+      #     configFile = ./wings.yml;
+      #   };
+      # };
     });
 }

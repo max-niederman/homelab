@@ -4,7 +4,7 @@
 
 with lib;
 let
-  nixpkgsRev = "nixos-22.05";
+  nixpkgsRev = "nixos-23.11";
 
   hosts = import ./hosts { };
   server = hosts.withName "beleg";
@@ -29,6 +29,7 @@ pkgs.mkShell {
     docker-compose
     nixpkgs-fmt
 
+    nixops_unstable
     homelab-deploy
   ];
 

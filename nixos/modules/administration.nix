@@ -13,7 +13,7 @@
         (_: {
           openssh.authorizedKeys.keys = [
             "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINmdKg6WzEiyKysklc3YAKLjHEDLZq4RAjRYlSVbwHs9 max@tar-minyatur"
-            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGs6xEFKObnTrjY17KbzsHeKMIoQ1NOYSLlWQPkgF4Uj max@tar-amandil"
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOLIO4au21QNFa+ILVOwqIJSy8fO3VlsNhyFxONPwU3N max@tar-elendil"
           ];
         });
     };

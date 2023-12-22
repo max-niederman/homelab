@@ -9,7 +9,6 @@ in
     ./services
     ./administration.nix
     ./networking.nix
-    ./storage.nix
     ./cluster.nix
     ./monitoring.nix
   ];
