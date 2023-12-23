@@ -98,14 +98,11 @@ rec {
 
       qbittorrent = {
         image = "binhex/arch-qbittorrentvpn";
-        privileged = true;
-        sysctls = {
-          "net.ipv4.conf.all.src_valid_mark" = "1";
-        };
+        cap_add = [ "NET_ADMIN" ];
         volumes = [
-          # "${./qbittorrent/iptable.sh}:/root/iptable.sh:ro"
+          "${./qbittorrent/iptable.sh}:/root/iptable.sh:ro"
 
-          "${./qbittorrent/wireguard}:/config/wireguard"
+          "${./qbittorrent/openvpn}:/config/openvpn"
 
           "/etc/localtime:/etc/localtime:ro"
 
@@ -118,7 +115,8 @@ rec {
         ];
         environment = {
           VPN_ENABLED = "yes";
-          VPN_CLIENT = "wireguard";
+          VPN_CLIENT = "openvpn";
+          VPN_PROV = "custom";
           ENABLE_PRIVOXY = "yes";
           LAN_NETWORK = "192.168.0.0/24";
           DOCKER_NETWORK = "10.0.0.0/16";
