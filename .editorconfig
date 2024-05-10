@@ -1,5 +1,0 @@
-[*.nix]
-tab_width = 2
-
-[*.yml]
-tab_width = 2
