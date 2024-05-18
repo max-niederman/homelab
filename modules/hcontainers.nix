@@ -27,6 +27,17 @@ in {
                 container, as a NixOS module.
               '';
             };
+
+            address = lib.mkOption {
+              description = ''
+                The IPv6 address of this container.
+              '';
+              type = lib.types.str;
+            };
+          };
+
+          config = {
+            address = mkAddress name;
           };
         }
       ));
@@ -34,19 +45,6 @@ in {
   };
 
   config = {
-    # add some useful library functions to the Nixpkgs lib
-    nixpkgs.overlays = [
-      (self: super: {
-        lib =
-          super.lib
-          // {
-            hcontainers = {
-              inherit mkAddress;
-            };
-          };
-      })
-    ];
-
     # set up the bridge network shared by all containers
     systemd.network = {
       netdevs."20-hcbridge" = {
@@ -82,9 +80,6 @@ in {
               privateNetwork = true;
               hostBridge = "hcbridge";
               localAddress6 = "${mkAddress name}/64";
-
-              config = {...}: {
-              };
             }
           ]
       )
