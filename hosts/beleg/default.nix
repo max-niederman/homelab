@@ -4,10 +4,12 @@
   ];
 
   config = {
+    boot.loader.systemd-boot.enable = true;
+
     # disable I/O scheduler since we're booting from NVMe
     boot.kernelParams = ["elevator=none"];
 
-    boot.loader.systemd-boot.enable = true;
+    services.zfs.autoScrub = { enable = true; interval = "1w"; };
 
     networking = {
       hostName = "beleg";
