@@ -1,6 +1,7 @@
 {...}: {
   imports = [
     ./hardware-configuration.nix
+    ./services.nix
   ];
 
   config = {
@@ -9,7 +10,10 @@
     # disable I/O scheduler since we're booting from NVMe
     boot.kernelParams = ["elevator=none"];
 
-    services.zfs.autoScrub = { enable = true; interval = "1w"; };
+    services.zfs.autoScrub = {
+      enable = true;
+      interval = "1w";
+    };
 
     networking = {
       hostName = "beleg";
