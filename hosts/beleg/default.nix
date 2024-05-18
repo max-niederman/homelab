@@ -13,9 +13,12 @@
     
     networking = {
       hostName = "beleg";
-      hostId = "3f69adf9";
+      hostId = "9f5b4e97";
     };
-    systemd.network.networks."10-lan".address = [ "192.168.0.11/24" ];
+    systemd.network.networks."10-lan" = {
+      matchConfig.Name = "enp5s0";
+      address = [ "192.168.0.11/24" ];
+    };
 
     system.stateVersion = "24.05";
   };

@@ -13,8 +13,6 @@
       enable = true;
 
       networks."10-lan" = {
-        matchConfig.Name = "enp5s0";
-
         routes = [
           { routeConfig.Gateway = "192.168.0.1"; }
         ];
