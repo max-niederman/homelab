@@ -1,7 +1,7 @@
 {...}: {
   imports = [
     ./hardware-configuration.nix
-    ./services.nix
+    ./services/monitoring.nix
   ];
 
   config = {

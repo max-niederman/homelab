@@ -2,6 +2,8 @@
   imports = [
     ./administration.nix
     ./networking.nix
+    ./services/caddy.nix
+    ./services/monitoring.nix
   ];
 
   config = {
