@@ -1,0 +1,9 @@
+keys:
+  - &admin age1mf7gjywm00gly7nr3glgj2xml4z4npvlwtqutu728elv6z4gafuqmdyp09
+  - &host_beleg age15xmulppxjr8x37398vmet2tecenzmp9xs3kf3rdhw973yfdtw5tsy0ek4n
+
+creation_rules:
+  - key_groups:
+    - age:
+      - *admin
+      - *host_beleg

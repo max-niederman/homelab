@@ -5,6 +5,7 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     deploy-rs.url = "github:serokell/deploy-rs";
+    sops-nix.url = "github:Mic92/sops-nix";
   };
 
   outputs = {
@@ -12,6 +13,7 @@
     nixpkgs,
     flake-utils,
     deploy-rs,
+    sops-nix,
   }:
     {
       nixosConfigurations = {
@@ -19,7 +21,10 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/beleg
+
             ./modules
+
+            sops-nix.nixosModules.sops
           ];
         };
       };
@@ -45,6 +50,10 @@
           name = "homelab";
           buildInputs = [
             deployPkgs.deploy-rs
+
+            pkgs.sops
+            pkgs.age
+            pkgs.ssh-to-age
 
             pkgs.alejandra
           ];

@@ -13,7 +13,5 @@
         ];
       };
     };
-
-    services.openssh.enable = true;
   };
 }
