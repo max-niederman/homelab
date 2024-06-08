@@ -22,5 +22,14 @@
         linkConfig.RequiredForOnline = "routable";
       };
     };
+
+    services.tailscale = {
+      enable = true;
+      authKeyFile = "/run/secrets/networking/ts_auth_key";
+    };
+
+    sops.secrets = {
+      "networking/ts_auth_key".owner = "root";
+    };
   };
 }
