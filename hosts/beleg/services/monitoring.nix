@@ -20,6 +20,12 @@
             {targets = ["beleg:9134"];}
           ];
         }
+        {
+          job_name = "caddy";
+          static_configs = [
+            {targets = ["beleg:2019"];}
+          ];
+        }
       ];
     };
 

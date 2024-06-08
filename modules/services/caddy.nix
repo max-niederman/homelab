@@ -78,6 +78,12 @@ in {
       package = caddy-with-plugins-and-secrets;
 
       globalConfig = ''
+        servers { metrics }
+
+        admin 0.0.0.0:2019 {
+          origins localhost:2019 [::1]:2019 127.0.0.1:2019 ${config.networking.hostName}:2019 ${config.networking.hostName}.banded-scala.ts.net:2019
+        }
+
         email max@maxniederman.com
 
         acme_dns cloudflare {env.CF_API_TOKEN}
