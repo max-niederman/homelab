@@ -24,7 +24,7 @@
               go
             ];
 
-            plugins = ["github.com/caddy-dns/porkbun@v0.1.4"];
+            plugins = ["github.com/caddy-dns/cloudflare@44030f9306f4815aceed3b042c7f3d2c2b110c97"];
 
             configurePhase = ''
               export GOCACHE=$TMPDIR/go-cache
@@ -44,7 +44,7 @@
               cp -a . $out
             '';
 
-            outputHash = "sha256-W1VoZhtGlL4eiC0ttXEpUAk8J9OgvbVrtGIEAmfssbk=";
+            outputHash = "sha256-KzJUWEF94ac1KHiFrFoo5YgaiQjCcBFYrJHKrd4OXUw=";
             outputHashMode = "recursive";
           });
 
@@ -68,8 +68,7 @@
 
     installPhase = ''
       makeWrapper $src/bin/caddy $out/bin/caddy \
-        --run "export PORKBUN_API_KEY=\$(cat /run/secrets/porkbun_dns/api_key)" \
-        --run "export PORKBUN_API_SECRET_KEY=\$(cat /run/secrets/porkbun_dns/api_secret_key)"
+        --run "export CF_API_TOKEN=\$(cat /run/secrets/caddy/cf_api_token)" \
     '';
   };
 in {
@@ -79,10 +78,9 @@ in {
       package = caddy-with-plugins-and-secrets;
 
       globalConfig = ''
-        acme_dns porkbun {
-          api_key {env.PORKBUN_API_KEY}
-          api_secret_key {env.PORKBUN_API_SECRET_KEY}
-        }
+        email max@maxniederman.com
+
+        acme_dns cloudflare {env.CF_API_TOKEN}
       '';
     };
 
@@ -91,9 +89,12 @@ in {
       AmbientCapabilities = "CAP_NET_BIND_SERVICE";
     };
 
+    systemd.tmpfiles.rules = [
+      "L /var/lib/caddy - - - - /persist/var/lib/caddy"
+    ];
+
     sops.secrets = {
-      "porkbun_dns/api_key".owner = config.users.users.caddy.name;
-      "porkbun_dns/api_secret_key".owner = config.users.users.caddy.name;
+      "caddy/cf_api_token".owner = config.users.users.caddy.name;
     };
   };
 }
