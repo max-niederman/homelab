@@ -11,13 +11,13 @@
         {
           job_name = "node";
           static_configs = [
-            {targets = ["192.168.0.11:9100"];}
+            {targets = ["beleg:9100"];}
           ];
         }
         {
           job_name = "zfs";
           static_configs = [
-            {targets = ["192.168.0.11:9134"];}
+            {targets = ["beleg:9134"];}
           ];
         }
       ];
@@ -67,8 +67,8 @@
       enable = true;
       settings = {
         server = {
-          http_addr = "192.168.0.11";
           http_port = 3000;
+          root_url = "https://grafana.maximal.enterprises";
         };
         analytics.reporting_enabled = false;
       };
@@ -82,13 +82,13 @@
 
     services.caddy.virtualHosts = {
       "prometheus.maximal.enterprises".extraConfig = ''
-        reverse_proxy 192.168.0.11:9090
+        reverse_proxy beleg:9090
       '';
       "loki.maximal.enterprises".extraConfig = ''
-        reverse_proxy 192.168.0.11:3100
+        reverse_proxy beleg:3100
       '';
       "grafana.maximal.enterprises".extraConfig = ''
-        reverse_proxy 192.168.0.11:3000
+        reverse_proxy beleg:3000
       '';
     };
   };
