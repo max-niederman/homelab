@@ -12,7 +12,7 @@
           http_listen_port = 9080;
         };
 
-        clients = [{ url = "https://loki.maximal.enterprises/loki/api/v1/push"; }];
+        clients = [{url = "https://loki.maximal.enterprises/loki/api/v1/push";}];
 
         scrape_configs = [
           {

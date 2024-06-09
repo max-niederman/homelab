@@ -1,4 +1,4 @@
-{...}: {
+{pkgs, ...}: {
   config = {
     networking = {
       firewall.enable = false;
@@ -20,6 +20,20 @@
           {routeConfig.Gateway = "192.168.0.1";}
         ];
         linkConfig.RequiredForOnline = "routable";
+      };
+    };
+
+    systemd.services."netns@" = {
+      description = "%I network namespace";
+      before = ["network.target"];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = [
+          "${pkgs.iproute}/bin/ip netns add %I"
+          "${pkgs.iproute}/bin/ip -netns %I link set lo up"
+        ];
+        ExecStop = "${pkgs.iproute}/bin/ip netns del %I";
       };
     };
 
