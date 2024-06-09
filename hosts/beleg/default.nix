@@ -2,6 +2,7 @@
   imports = [
     ./hardware-configuration.nix
     ./services/monitoring.nix
+    ./services/media.nix
   ];
 
   config = {

@@ -1,4 +1,4 @@
-{config,...}: {
+{config, ...}: {
   config = {
     services.prometheus = {
       enable = true;
