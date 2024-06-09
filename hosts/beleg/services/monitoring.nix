@@ -81,9 +81,9 @@
     };
 
     systemd.tmpfiles.rules = [
-      "L /var/lib/prometheus2 - prometheus - - /persist/var/lib/prometheus2"
-      "L /var/lib/loki        - loki       - - /persist/var/lib/loki"
-      "L /var/lib/grafana     - grafana    - - /persist/var/lib/grafana"
+      "L /var/lib/prometheus2 - prometheus - - /persist/prometheus2"
+      "L /var/lib/loki        - loki       - - /persist/loki"
+      "L /var/lib/grafana     - grafana    - - /persist/grafana"
     ];
 
     services.caddy.virtualHosts = {

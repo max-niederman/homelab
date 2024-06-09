@@ -96,7 +96,7 @@ in {
     };
 
     systemd.tmpfiles.rules = [
-      "L /var/lib/caddy - - - - /persist/var/lib/caddy"
+      "L /var/lib/caddy - - - - /persist/caddy"
     ];
 
     sops.secrets = {
