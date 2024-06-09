@@ -1,11 +1,32 @@
-{pkgs, ...}: {
+{pkgs, ...}: let
+  netns = "harbor";
+  lanPrefix = "fc42:1651:0:0";
+in {
   config = {
-    systemd.services.safe-harbor-vpn = let
-      netns = "harbor";
+    systemd.services.safe-harbor-lan = {
+      description = "Safe harbor LAN Access";
 
+      after = ["netns@${netns}.service"];
+      requires = ["netns@${netns}.service"];
+
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = [
+          "${pkgs.iproute2}/bin/ip link add vethharbor type veth peer name vethlan netns ${netns}"
+          "${pkgs.iproute2}/bin/ip addr add ${lanPrefix}::1/64 dev vethharbor"
+          "${pkgs.iproute2}/bin/ip link set dev vethharbor up"
+          "${pkgs.iproute2}/bin/ip -n ${netns} addr add ${lanPrefix}::2/64 dev vethlan"
+          "${pkgs.iproute2}/bin/ip -n ${netns} link set dev vethlan up"
+        ];
+        ExecStop = "${pkgs.iproute2}/bin/ip link del vethharbor";
+      };
+    };
+
+    systemd.services.safe-harbor-internet = let
       # adapted from http://www.naju.se/articles/openvpn-netns
       netns-script = pkgs.writeShellApplication {
-        name = "harbor-netns-script";
+        name = "netns-script-${netns}";
 
         runtimeInputs = with pkgs; [iproute2];
 
@@ -17,15 +38,15 @@
                       "$4/''${ifconfig_netmask:-30}" \
                       ''${ifconfig_broadcast:+broadcast "$ifconfig_broadcast"}
               if [ -n "$ifconfig_ipv6_local" ]; then
-                      ip netns exec ${netns} ip addr add dev "$1" \
-                              "$ifconfig_ipv6_local"/112
+                ip netns exec ${netns} ip addr add dev "$1" \
+                        "$ifconfig_ipv6_local"/112
               fi
               ;;
             route-up)
               ip netns exec ${netns} ip route add default via "$route_vpn_gateway"
               if [ -n "$ifconfig_ipv6_remote" ]; then
-                      ip netns exec ${netns} ip route add default via \
-                              "$ifconfig_ipv6_remote"
+                ip netns exec ${netns} ip route add default via \
+                        "$ifconfig_ipv6_remote"
               fi
               ;;
           esac
@@ -35,16 +56,16 @@
         excludeShellChecks = ["SC2154"];
       };
 
-      netns-script-bin = "${netns-script}/bin/harbor-netns-script";
+      netns-script-bin = "${netns-script}/bin/netns-script-${netns}";
     in {
-      description = "Safe harbor VPN";
+      description = "Safe harbor VPN Internet Access";
 
       after = ["netns@${netns}.service"];
       requires = ["netns@${netns}.service"];
 
       serviceConfig = {
         Type = "simple";
-        # Restart = "always";
+        Restart = "always";
         ExecStart = "${pkgs.openvpn}/bin/openvpn --errors-to-stderr --ifconfig-noexec --route-noexec --dev tun --script-security 2 --up ${netns-script-bin} --route-up ${netns-script-bin} --config ${./Mercury-01.ovpn}";
       };
     };
