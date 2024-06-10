@@ -4,6 +4,8 @@
   lib,
   ...
 }: let
+  cfg = config.services.caddy;
+
   # vendored from https://github.com/NixOS/nixpkgs/pull/259275
   caddy-with-plugins = pkgs.caddy.override {
     buildGoModule = args:
@@ -72,9 +74,32 @@
     '';
   };
 in {
+  options.services.caddy = {
+    maximalHosts = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.submodule ({
+        config,
+        lib,
+        ...
+      }: {
+        options = {
+          proxyTo = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+          };
+
+          extraConfig = lib.mkOption {
+            type = lib.types.str;
+            default = lib.strings.optionalString (config.proxyTo != null) ''
+              reverse_proxy ${config.proxyTo}
+            '';
+          };
+        };
+      }));
+    };
+  };
+
   config = {
     services.caddy = {
-      enable = true;
       package = caddy-with-plugins-and-secrets;
 
       globalConfig = ''
@@ -83,11 +108,23 @@ in {
         admin 0.0.0.0:2019 {
           origins localhost:2019 [::1]:2019 127.0.0.1:2019 ${config.networking.hostName}:2019 ${config.networking.hostName}.banded-scala.ts.net:2019
         }
-
-        email max@maxniederman.com
-
-        acme_dns cloudflare {env.CF_API_TOKEN}
       '';
+
+      virtualHosts =
+        lib.attrsets.mapAttrs' (name: cfg: {
+          name = "${name}.maximal.enterprises";
+          value = {
+            extraConfig = ''
+              tls max@maxniederman.com {
+                dns cloudflare {env.CF_API_TOKEN}
+                resolvers 1.1.1.1 1.0.0.1
+              }
+
+              ${cfg.extraConfig or ""}
+            '';
+          };
+        })
+        cfg.maximalHosts;
     };
 
     # allow caddy to bind to privileged ports

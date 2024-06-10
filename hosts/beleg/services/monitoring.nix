@@ -86,16 +86,10 @@
       "L /var/lib/grafana     - grafana    - - /persist/grafana"
     ];
 
-    services.caddy.virtualHosts = {
-      "prometheus.maximal.enterprises".extraConfig = ''
-        reverse_proxy beleg:9090
-      '';
-      "loki.maximal.enterprises".extraConfig = ''
-        reverse_proxy beleg:3100
-      '';
-      "grafana.maximal.enterprises".extraConfig = ''
-        reverse_proxy beleg:3000
-      '';
+    services.caddy.maximalHosts = {
+      prometheus.proxyTo = "beleg:9090";
+      loki.proxyTo = "beleg:3100";
+      grafana.proxyTo = "beleg:3000";
     };
   };
 }
