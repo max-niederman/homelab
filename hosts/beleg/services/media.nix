@@ -3,6 +3,44 @@
   lanPrefix = "fc42:1651:0:0";
 in {
   config = {
+    services.transmission = {
+      enable = true;
+
+      settings = {
+        download-dir = "/persist/media/downloads";
+        incomplete-dir = "/persist/media/downloads/.incomplete";
+        incomplete-dir-enabled = true;
+
+        rpc-bind-address = "${lanPrefix}::2";
+        rpc-port = 9091;
+        rpc-whitelist-enabled = false;
+        rpc-host-whitelist-enabled = false;
+      };
+
+      webHome = pkgs.flood-for-transmission;
+    };
+    systemd.services.transmission = {
+      after = ["safe-harbor-lan.service" "safe-harbor-internet.service"];
+      requires = ["safe-harbor-lan.service" "safe-harbor-internet.service"];
+
+      serviceConfig = {
+        NetworkNamespacePath = "/run/netns/${netns}";
+        BindReadOnlyPaths = ["/etc/netns/${netns}/resolv.conf:/etc/resolv.conf"];
+      };
+    };
+
+    services.caddy.maximalHosts = {
+      transmission.proxyTo = "[${lanPrefix}::2]:9091";
+    };
+
+    environment.etc."netns/${netns}/resolv.conf".text = ''
+      nameserver 2606:4700:4700::1111
+      nameserver 2606:4700:4700::1001
+      nameserver 1.1.1.1
+      nameserver 1.0.0.1
+      options edns0
+    '';
+
     systemd.services.safe-harbor-lan = {
       description = "Safe harbor LAN Access";
 
@@ -64,7 +102,7 @@ in {
       requires = ["netns@${netns}.service"];
 
       serviceConfig = {
-        Type = "simple";
+        Type = "exec";
         Restart = "always";
         ExecStart = "${pkgs.openvpn}/bin/openvpn --errors-to-stderr --ifconfig-noexec --route-noexec --dev tun --script-security 2 --up ${netns-script-bin} --route-up ${netns-script-bin} --config ${./Mercury-01.ovpn}";
       };
