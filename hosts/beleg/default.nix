@@ -25,6 +25,8 @@
       address = ["192.168.0.11/24"];
     };
 
+    services.caddy.enable = true;
+
     system.stateVersion = "24.05";
   };
 }
