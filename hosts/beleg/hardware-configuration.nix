@@ -32,6 +32,11 @@
     fsType = "zfs";
   };
 
+  fileSystems."/persist/media" =
+    { device = "mpool/safe/persist";
+      fsType = "zfs";
+    };
+
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/7ADD-4706";
     fsType = "vfat";
