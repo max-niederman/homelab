@@ -29,9 +29,18 @@ in {
       };
     };
 
+    services.sonarr = {
+      enable = true;
+    };
+
     services.caddy.maximalHosts = {
       transmission.proxyTo = "[${lanPrefix}::2]:9091";
+      sonarr.proxyTo = "beleg:8989";
     };
+
+    systemd.tmpfiles.rules = [
+      "L /var/lib/sonarr - sonarr sonarr - /persist/sonarr"
+    ];
 
     environment.etc."netns/${netns}/resolv.conf".text = ''
       nameserver 2606:4700:4700::1111
