@@ -33,13 +33,20 @@ in {
       enable = true;
     };
 
+    services.jellyfin = {
+      enable = true;
+
+    };
+
     services.caddy.maximalHosts = {
       transmission.proxyTo = "[${lanPrefix}::2]:9091";
       sonarr.proxyTo = "beleg:8989";
+      jellyfin.proxyTo = "beleg:8096";
     };
 
     systemd.tmpfiles.rules = [
-      "L /var/lib/sonarr - sonarr sonarr - /persist/sonarr"
+      "L /var/lib/sonarr   - - - - /persist/sonarr"
+      "L /var/lib/jellyfin - - - - /persist/jellyfin"
     ];
 
     environment.etc."netns/${netns}/resolv.conf".text = ''

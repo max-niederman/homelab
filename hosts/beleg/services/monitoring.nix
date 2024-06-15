@@ -81,9 +81,9 @@
     };
 
     systemd.tmpfiles.rules = [
-      "L /var/lib/prometheus2 - prometheus - - /persist/prometheus2"
-      "L /var/lib/loki        - loki       - - /persist/loki"
-      "L /var/lib/grafana     - grafana    - - /persist/grafana"
+      "L /var/lib/prometheus2 - - - - /persist/prometheus2"
+      "L /var/lib/loki        - - - - /persist/loki"
+      "L /var/lib/grafana     - - - - /persist/grafana"
     ];
 
     services.caddy.maximalHosts = {
