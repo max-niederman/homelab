@@ -16,6 +16,33 @@
       interval = "1w";
     };
 
+    services.sanoid = {
+      enable = true;
+
+      datasets = {
+        "rpool/safe" = {
+          recursive = true;
+
+          autosnap = true;
+          autoprune = true;
+
+          hourly = 24;
+          daily = 30;
+          monthly = 3;
+        };
+
+        "mpool/safe" = {
+          recursive = true;
+
+          autosnap = true;
+          autoprune = true;
+
+          hourly = 24;
+          daily = 7;
+        };
+      };
+    };
+
     networking = {
       hostName = "beleg";
       hostId = "9f5b4e97";
