@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{config, lib, pkgs, ...}: let
   netns = "harbor";
   lanPrefix = "fc42:1651:0:0";
 in {
@@ -29,22 +29,49 @@ in {
       };
     };
 
+    # we can't use NixOS's built-in Prowlarr service because it uses systemd dynamic users, which interferes with the impermanence setup
+    systemd.services.prowlarr = {
+      description = "Prowlarr";
+      after = ["network.target"];
+      wantedBy = ["multi-user.target"];
+
+      serviceConfig = {
+        Type = "simple";
+        User = "prowlarr";
+        Group = "prowlarr";
+        ExecStart = "${lib.getExe pkgs.prowlarr} -nobrowser -data=/var/lib/prowlarr";
+        Restart = "on-failure";
+      };
+    };
+    ids = {
+      uids.prowlarr = 801;
+      gids.prowlarr = 801;
+    };
+    users.users.prowlarr = {
+      group = "prowlarr";
+      home = "/var/lib/prowlarr";
+      uid = config.ids.uids.prowlarr;
+    };
+    users.groups.prowlarr.gid = config.ids.gids.prowlarr;
+    # TODO: set up exportarr-prowlarr
+
     services.sonarr = {
       enable = true;
     };
 
     services.jellyfin = {
       enable = true;
-
     };
 
     services.caddy.maximalHosts = {
       transmission.proxyTo = "[${lanPrefix}::2]:9091";
+      prowlarr.proxyTo = "beleg:9696";
       sonarr.proxyTo = "beleg:8989";
       jellyfin.proxyTo = "beleg:8096";
     };
 
     systemd.tmpfiles.rules = [
+      "L /var/lib/prowlarr - - - - /persist/sonarr"
       "L /var/lib/sonarr   - - - - /persist/sonarr"
       "L /var/lib/jellyfin - - - - /persist/jellyfin"
     ];
