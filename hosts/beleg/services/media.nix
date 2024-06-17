@@ -55,6 +55,9 @@ in {
     users.groups.prowlarr.gid = config.ids.gids.prowlarr;
     # TODO: set up exportarr-prowlarr
 
+    environment.systemPackages = with pkgs; [ recyclarr ];
+    environment.variables.RECYCLARR_APP_DATA = "/persist/recyclarr";
+
     services.sonarr = {
       enable = true;
     };
