@@ -16,7 +16,7 @@
             pname = "caddy-using-xcaddy-${pkgs.xcaddy.version}";
             inherit (pkgs.caddy) version;
 
-            isUpToDate = lib.asserts.assertMsg (version == "2.7.6") "output hash is not up-to-date";
+            isUpToDate = lib.asserts.assertMsg (version == "2.8.4") "output hash is not up-to-date, update the version in the isUpToDate assertion the outputHash";
 
             dontUnpack = true;
             dontFixup = true;
@@ -26,7 +26,7 @@
               go
             ];
 
-            plugins = ["github.com/caddy-dns/cloudflare@44030f9306f4815aceed3b042c7f3d2c2b110c97"];
+            plugins = ["github.com/caddy-dns/cloudflare@89f16b99c18ef49c8bb470a82f895bce01cbaece"];
 
             configurePhase = ''
               export GOCACHE=$TMPDIR/go-cache
@@ -46,7 +46,7 @@
               cp -a . $out
             '';
 
-            outputHash = "sha256-KzJUWEF94ac1KHiFrFoo5YgaiQjCcBFYrJHKrd4OXUw=";
+            outputHash = "sha256-sHfcEXF39s2PTyOl6HX8lqHb/wv3k+VuEq61Wo8xtF4=";
             outputHashMode = "recursive";
           });
 
@@ -70,7 +70,8 @@
 
     installPhase = ''
       makeWrapper $src/bin/caddy $out/bin/caddy \
-        --run "export CF_API_TOKEN=\$(cat /run/secrets/caddy/cf_api_token)" \
+        --run "export CF_ZONE_TOKEN=\$(cat /run/secrets/caddy/cf_zone_token)" \
+        --run "export CF_API_TOKEN=\$(cat /run/secrets/caddy/cf_api_token)"
     '';
   };
 in {
@@ -116,7 +117,10 @@ in {
           value = {
             extraConfig = ''
               tls max@maxniederman.com {
-                dns cloudflare {env.CF_API_TOKEN}
+                dns cloudflare {
+                  zone_token {env.CF_ZONE_TOKEN}
+                  api_token {env.CF_API_TOKEN}
+                }
                 resolvers 1.1.1.1 1.0.0.1
               }
 
@@ -137,6 +141,7 @@ in {
     ];
 
     sops.secrets = {
+      "caddy/cf_zone_token".owner = config.users.users.caddy.name;
       "caddy/cf_api_token".owner = config.users.users.caddy.name;
     };
   };

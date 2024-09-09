@@ -30,6 +30,8 @@
   fileSystems."/persist" = {
     device = "rpool/safe/persist";
     fsType = "zfs";
+    # this is necessary so our ssh keys are available in time for sops-nix
+    neededForBoot = true; 
   };
 
   fileSystems."/persist/media" = {

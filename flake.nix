@@ -31,7 +31,7 @@
 
       deploy.nodes = {
         beleg = {
-          hostname = "192.168.0.11";
+          hostname = "beleg.banded-scala.ts.net";
           profiles.system = {
             sshUser = "root";
             path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.beleg;
