@@ -107,51 +107,31 @@ in {
       };
     };
 
-    systemd.services.safe-harbor-internet = let
-      # adapted from http://www.naju.se/articles/openvpn-netns
-      netns-script = pkgs.writeShellApplication {
-        name = "netns-script-${netns}";
-
-        runtimeInputs = with pkgs; [iproute2];
-
-        text = ''
-          case $script_type in
-            up)
-              ip link set dev "$1" up netns ${netns} mtu "$2"
-              ip netns exec ${netns} ip addr add dev "$1" \
-                      "$4/''${ifconfig_netmask:-30}" \
-                      ''${ifconfig_broadcast:+broadcast "$ifconfig_broadcast"}
-              if [ -n "$ifconfig_ipv6_local" ]; then
-                ip netns exec ${netns} ip addr add dev "$1" \
-                        "$ifconfig_ipv6_local"/112
-              fi
-              ;;
-            route-up)
-              ip netns exec ${netns} ip route add default via "$route_vpn_gateway"
-              if [ -n "$ifconfig_ipv6_remote" ]; then
-                ip netns exec ${netns} ip route add default via \
-                        "$ifconfig_ipv6_remote"
-              fi
-              ;;
-          esac
-        '';
-
-        # openvpn sets some variables that shellcheck doesn't know about
-        excludeShellChecks = ["SC2154"];
-      };
-
-      netns-script-bin = "${netns-script}/bin/netns-script-${netns}";
-    in {
+    systemd.services.safe-harbor-internet = {
       description = "Safe harbor VPN Internet Access";
 
       after = ["netns@${netns}.service"];
       requires = ["netns@${netns}.service"];
 
       serviceConfig = {
-        Type = "exec";
-        Restart = "always";
-        ExecStart = "${pkgs.openvpn}/bin/openvpn --errors-to-stderr --ifconfig-noexec --route-noexec --dev tun --script-security 2 --up ${netns-script-bin} --route-up ${netns-script-bin} --config ${./Mercury-01.ovpn}";
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = [
+          "${pkgs.iproute2}/bin/ip link add vethinternet type wireguard"
+          "${pkgs.wireguard-tools}/bin/wg set vethinternet private-key /run/secrets/networking/mullvad_wg_pk peer vnD/2bCGqH4b6zZSRuLGSw9oN4NhQdTW9jlMaa2N1AU= allowed-ips 0.0.0.0/0,::0/0 endpoint 199.229.250.56:51820"
+          "${pkgs.iproute2}/bin/ip link set dev vethinternet netns ${netns}"
+          "${pkgs.iproute2}/bin/ip -n ${netns} address add dev vethinternet 10.69.233.140/32"
+          "${pkgs.iproute2}/bin/ip -n ${netns} address add dev vethinternet fc00:bbbb:bbbb:bb01::6:e98b/128"
+          "${pkgs.iproute2}/bin/ip -n ${netns} link set up dev vethinternet"
+          "${pkgs.iproute2}/bin/ip -n ${netns} route add default dev vethinternet"
+          "${pkgs.iproute2}/bin/ip -n ${netns} -6 route add default dev vethinternet"
+        ];
+        ExecStop = "${pkgs.iproute2}/bin/ip -n ${netns} link del vethinternet";
       };
+    };
+
+    sops.secrets = {
+      "networking/mullvad_wg_pk".owner = "root";
     };
   };
 }
