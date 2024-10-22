@@ -1,0 +1,42 @@
+diff --git a/net/netfilter/xt_NFLOG.c b/net/netfilter/xt_NFLOG.c
+index d80abd6ccaf8f71fa70605fef7edada827a19ceb..6dcf4bc7e30b2ae364a1cd9ac8df954a90905c52 100644
+--- a/net/netfilter/xt_NFLOG.c
++++ b/net/netfilter/xt_NFLOG.c
+@@ -79,7 +79,7 @@ static struct xt_target nflog_tg_reg[] __read_mostly = {
+ 	{
+ 		.name       = "NFLOG",
+ 		.revision   = 0,
+-		.family     = NFPROTO_IPV4,
++		.family     = NFPROTO_IPV6,
+ 		.checkentry = nflog_tg_check,
+ 		.destroy    = nflog_tg_destroy,
+ 		.target     = nflog_tg,
+diff --git a/net/netfilter/xt_TRACE.c b/net/netfilter/xt_TRACE.c
+index f3fa4f11348cd8ad796ce94f012cd48aa7a9020f..2a029b4adbcadf95e493b153f613a210624a9101 100644
+--- a/net/netfilter/xt_TRACE.c
++++ b/net/netfilter/xt_TRACE.c
+@@ -49,6 +49,7 @@ static struct xt_target trace_tg_reg[] __read_mostly = {
+ 		.target		= trace_tg,
+ 		.checkentry	= trace_tg_check,
+ 		.destroy	= trace_tg_destroy,
++		.me         = THIS_MODULE,
+ 	},
+ #endif
+ };
+diff --git a/net/netfilter/xt_mark.c b/net/netfilter/xt_mark.c
+index f76fe04fc9a4e19f18ac323349ba6f22a00eafd7..65b965ca40ea7ea5d9feff381b433bf267a424c4 100644
+--- a/net/netfilter/xt_mark.c
++++ b/net/netfilter/xt_mark.c
+@@ -62,7 +62,7 @@ static struct xt_target mark_tg_reg[] __read_mostly = {
+ 	{
+ 		.name           = "MARK",
+ 		.revision       = 2,
+-		.family         = NFPROTO_IPV4,
++		.family         = NFPROTO_IPV6,
+ 		.target         = mark_tg,
+ 		.targetsize     = sizeof(struct xt_mark_tginfo2),
+ 		.me             = THIS_MODULE,
+
+---
+base-commit: 75aa74d52f43e75d0beb20572f98529071b700e5
+change-id: 20241018-xtables-typos-dfeadb8b122d
