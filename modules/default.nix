@@ -1,5 +1,6 @@
 {
   imports = [
+    ./kernel
     ./administration.nix
     ./networking.nix
     ./services/caddy.nix
