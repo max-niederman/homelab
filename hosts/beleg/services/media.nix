@@ -61,6 +61,10 @@ in {
     services.sonarr = {
       enable = true;
     };
+    
+    services.radarr = {
+      enable = true;
+    };
 
     services.jellyfin = {
       enable = true;
@@ -70,12 +74,14 @@ in {
       transmission.proxyTo = "[${lanPrefix}::2]:9091";
       prowlarr.proxyTo = "beleg:9696";
       sonarr.proxyTo = "beleg:8989";
+      radarr.proxyTo = "beleg:7878";
       jellyfin.proxyTo = "beleg:8096";
     };
 
     systemd.tmpfiles.rules = [
-      "L /var/lib/prowlarr - - - - /persist/sonarr"
+      "L /var/lib/prowlarr - - - - /persist/prowlarr"
       "L /var/lib/sonarr   - - - - /persist/sonarr"
+      "L /var/lib/radarr   - - - - /persist/radarr"
       "L /var/lib/jellyfin - - - - /persist/jellyfin"
     ];
 
