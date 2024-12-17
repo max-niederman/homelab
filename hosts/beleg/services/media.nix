@@ -1,4 +1,5 @@
-{config, lib, pkgs, ...}: let
+{ config, lib, pkgs, ... }:
+let
   netns = "harbor";
   lanPrefix = "fc42:1651:0:0";
 in {
@@ -20,26 +21,28 @@ in {
       webHome = pkgs.flood-for-transmission;
     };
     systemd.services.transmission = {
-      after = ["safe-harbor-lan.service" "safe-harbor-internet.service"];
-      requires = ["safe-harbor-lan.service" "safe-harbor-internet.service"];
+      after = [ "safe-harbor-lan.service" "safe-harbor-internet.service" ];
+      requires = [ "safe-harbor-lan.service" "safe-harbor-internet.service" ];
 
       serviceConfig = {
         NetworkNamespacePath = "/run/netns/${netns}";
-        BindReadOnlyPaths = ["/etc/netns/${netns}/resolv.conf:/etc/resolv.conf"];
+        BindReadOnlyPaths =
+          [ "/etc/netns/${netns}/resolv.conf:/etc/resolv.conf" ];
       };
     };
 
     # we can't use NixOS's built-in Prowlarr service because it uses systemd dynamic users, which interferes with the impermanence setup
     systemd.services.prowlarr = {
       description = "Prowlarr";
-      after = ["network.target"];
-      wantedBy = ["multi-user.target"];
+      after = [ "network.target" ];
+      wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
         Type = "simple";
         User = "prowlarr";
         Group = "prowlarr";
-        ExecStart = "${lib.getExe pkgs.prowlarr} -nobrowser -data=/var/lib/prowlarr";
+        ExecStart =
+          "${lib.getExe pkgs.prowlarr} -nobrowser -data=/var/lib/prowlarr";
         Restart = "on-failure";
       };
     };
@@ -58,17 +61,11 @@ in {
     environment.systemPackages = with pkgs; [ recyclarr ];
     environment.variables.RECYCLARR_APP_DATA = "/persist/recyclarr";
 
-    services.sonarr = {
-      enable = true;
-    };
-    
-    services.radarr = {
-      enable = true;
-    };
+    services.sonarr = { enable = true; };
 
-    services.jellyfin = {
-      enable = true;
-    };
+    services.radarr = { enable = true; };
+
+    services.jellyfin = { enable = true; };
 
     services.caddy.maximalHosts = {
       transmission.proxyTo = "[${lanPrefix}::2]:9091";
@@ -96,8 +93,8 @@ in {
     systemd.services.safe-harbor-lan = {
       description = "Safe harbor LAN Access";
 
-      after = ["netns@${netns}.service"];
-      requires = ["netns@${netns}.service"];
+      after = [ "netns@${netns}.service" ];
+      requires = [ "netns@${netns}.service" ];
 
       serviceConfig = {
         Type = "oneshot";
@@ -116,8 +113,8 @@ in {
     systemd.services.safe-harbor-internet = {
       description = "Safe harbor VPN Internet Access";
 
-      after = ["netns@${netns}.service"];
-      requires = ["netns@${netns}.service"];
+      after = [ "netns@${netns}.service" ];
+      requires = [ "netns@${netns}.service" ];
 
       serviceConfig = {
         Type = "oneshot";
@@ -136,8 +133,6 @@ in {
       };
     };
 
-    sops.secrets = {
-      "networking/mullvad_wg_pk".owner = "root";
-    };
+    sops.secrets = { "networking/mullvad_wg_pk".owner = "root"; };
   };
 }

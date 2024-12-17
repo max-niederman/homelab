@@ -1,9 +1,6 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
   config = {
-    environment.systemPackages = with pkgs; [
-      htop
-      neovim
-    ];
+    environment.systemPackages = with pkgs; [ htop neovim ];
 
     users = {
       mutableUsers = false;

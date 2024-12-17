@@ -1,4 +1,4 @@
-{...}: {
+{ ... }: {
   imports = [
     ./hardware-configuration.nix
     ./services/monitoring.nix
@@ -9,7 +9,7 @@
     boot.loader.systemd-boot.enable = true;
 
     # disable I/O scheduler since we're booting from NVMe
-    boot.kernelParams = ["elevator=none"];
+    boot.kernelParams = [ "elevator=none" ];
 
     services.zfs.autoScrub = {
       enable = true;
@@ -49,7 +49,7 @@
     };
     systemd.network.networks."10-lan" = {
       matchConfig.Name = "enp5s0";
-      address = ["192.168.0.11/24"];
+      address = [ "192.168.0.11/24" ];
     };
 
     services.caddy.enable = true;

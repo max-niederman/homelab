@@ -6,15 +6,10 @@
     flake-utils.url = "github:numtide/flake-utils";
     deploy-rs.url = "github:serokell/deploy-rs";
     sops-nix.url = "github:Mic92/sops-nix";
+    dns.url = "github:nix-community/dns.nix";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    flake-utils,
-    deploy-rs,
-    sops-nix,
-  }:
+  outputs = { self, nixpkgs, flake-utils, deploy-rs, sops-nix, dns, }:
     {
       nixosConfigurations = {
         beleg = nixpkgs.lib.nixosSystem {
@@ -26,6 +21,7 @@
 
             sops-nix.nixosModules.sops
           ];
+          specialArgs = { inherit dns; };
         };
       };
 
@@ -34,13 +30,13 @@
           hostname = "beleg.banded-scala.ts.net";
           profiles.system = {
             sshUser = "root";
-            path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.beleg;
+            path = deploy-rs.lib.x86_64-linux.activate.nixos
+              self.nixosConfigurations.beleg;
           };
         };
       };
-    }
-    // flake-utils.lib.eachSystem ["x86_64-linux"] (
-      system: let
+    } // flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
+      let
         pkgs = nixpkgs.legacyPackages.${system};
         deployPkgs = deploy-rs.packages.${system};
       in {
@@ -58,6 +54,5 @@
             pkgs.alejandra
           ];
         };
-      }
-    );
+      });
 }

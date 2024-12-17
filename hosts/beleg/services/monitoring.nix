@@ -1,30 +1,22 @@
-{config, ...}: {
+{ config, ... }: {
   config = {
     services.prometheus = {
       enable = true;
 
-      globalConfig = {
-        scrape_interval = "10s";
-      };
+      globalConfig = { scrape_interval = "10s"; };
 
       scrapeConfigs = [
         {
           job_name = "node";
-          static_configs = [
-            {targets = ["beleg:9100"];}
-          ];
+          static_configs = [{ targets = [ "beleg:9100" ]; }];
         }
         {
           job_name = "zfs";
-          static_configs = [
-            {targets = ["beleg:9134"];}
-          ];
+          static_configs = [{ targets = [ "beleg:9134" ]; }];
         }
         {
           job_name = "caddy";
-          static_configs = [
-            {targets = ["beleg:2019"];}
-          ];
+          static_configs = [{ targets = [ "beleg:2019" ]; }];
         }
       ];
     };
@@ -54,18 +46,16 @@
           };
         };
 
-        schema_config.configs = [
-          {
-            from = "2024-06-01";
-            store = "tsdb";
-            object_store = "filesystem";
-            schema = "v13";
-            index = {
-              prefix = "index_";
-              period = "24h";
-            };
-          }
-        ];
+        schema_config.configs = [{
+          from = "2024-06-01";
+          store = "tsdb";
+          object_store = "filesystem";
+          schema = "v13";
+          index = {
+            prefix = "index_";
+            period = "24h";
+          };
+        }];
       };
     };
 
