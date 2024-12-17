@@ -10,7 +10,7 @@
   config = {
     sops = {
       defaultSopsFile = ../secrets.yaml;
-      age.sshKeyPaths = ["/persist/ssh/ssh_host_ed25519_key"];
+      age.sshKeyPaths = [ "/persist/ssh/ssh_host_ed25519_key" ];
     };
 
     services.openssh = {
