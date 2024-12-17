@@ -124,7 +124,7 @@ in {
         RemainAfterExit = true;
         ExecStart = [
           "${pkgs.iproute2}/bin/ip link add vethinternet type wireguard"
-          "${pkgs.wireguard-tools}/bin/wg set vethinternet private-key /run/secrets/networking/mullvad_wg_pk peer vnD/2bCGqH4b6zZSRuLGSw9oN4NhQdTW9jlMaa2N1AU= allowed-ips 0.0.0.0/0,::0/0 endpoint 199.229.250.56:51820"
+          "${pkgs.wireguard-tools}/bin/wg set vethinternet private-key /run/secrets/networking/mullvad_wg_pk peer Xt80FGN9eLy1vX3F29huj6oW2MnQt7ne3DMBpo525Qw= allowed-ips 0.0.0.0/0,::0/0 endpoint 138.199.43.78:51820"
           "${pkgs.iproute2}/bin/ip link set dev vethinternet netns ${netns}"
           "${pkgs.iproute2}/bin/ip -n ${netns} address add dev vethinternet 10.69.233.140/32"
           "${pkgs.iproute2}/bin/ip -n ${netns} address add dev vethinternet fc00:bbbb:bbbb:bb01::6:e98b/128"
