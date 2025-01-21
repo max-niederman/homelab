@@ -23,10 +23,10 @@
         Type = "oneshot";
         RemainAfterExit = true;
         ExecStart = [
-          "${pkgs.iproute}/bin/ip netns add %I"
-          "${pkgs.iproute}/bin/ip -netns %I link set lo up"
+          "${pkgs.iproute2}/bin/ip netns add %I"
+          "${pkgs.iproute2}/bin/ip -netns %I link set lo up"
         ];
-        ExecStop = "${pkgs.iproute}/bin/ip netns del %I";
+        ExecStop = "${pkgs.iproute2}/bin/ip netns del %I";
       };
     };
 
@@ -38,7 +38,7 @@
     services.nsd = {
       enable = true;
 
-      interfaces = [ "lo" "tailscale0" ];
+      interfaces = [ "127.0.0.1" "::1" "100.95.120.4" "fd7a:115c:a1e0::901:7804" ];
 
       zones = {
         "maximal.enterprises".data = dns.lib.toString "maximal.enterprises" {

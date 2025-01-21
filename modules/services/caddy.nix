@@ -10,7 +10,7 @@ let
           pname = "caddy-using-xcaddy-${pkgs.xcaddy.version}";
           inherit (pkgs.caddy) version;
 
-          isUpToDate = lib.asserts.assertMsg (version == "2.8.4")
+          isUpToDate = lib.asserts.assertMsg (version == "2.9.0")
             "output hash is not up-to-date, update the version in the isUpToDate assertion the outputHash";
 
           dontUnpack = true;
@@ -41,7 +41,7 @@ let
             cp -a . $out
           '';
 
-          outputHash = "sha256-sHfcEXF39s2PTyOl6HX8lqHb/wv3k+VuEq61Wo8xtF4=";
+          outputHash = "sha256-JoujVXRXjKUam1Ej3/zKVvF0nX97dUizmISjy3M3Kr8=";
           outputHashMode = "recursive";
         });
 
